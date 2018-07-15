@@ -6,6 +6,17 @@ class CArray
 	int m_size{};
 	int m_capacity{};
 	
+	void CopyOverAndDestruct(T* oldArray, int oldSize, T* newArray)
+	{
+		for (int i = 0; i < oldSize; ++i)
+		{
+			new(newArray + i) T{ (*(oldArray + i)) };
+			(oldArray + i)->~T();
+		}
+		char* oldBuffer = reinterpret_cast<char*>(oldArray);
+		delete[] oldBuffer;
+	}
+
 	void ChangeCapacity(int newCapacity)
 	{
 		if (newCapacity < m_size)
@@ -15,17 +26,7 @@ class CArray
 
 		char* newBuffer = new char[sizeof(T)*newCapacity];
 		T* newArray = reinterpret_cast<T*>(newBuffer);
-		for (int i = 0; i < m_size; i++)
-		{
-			new(newArray + i) T{ (*(m_array + i)) }; // copy over
-		}
-
-		for (int i = 0; i < m_size; i++)
-		{
-			(m_array + i)->~T();
-		}
-		char* oldBuffer = reinterpret_cast<char*>(m_array);
-		delete[] oldBuffer;
+		CopyOverAndDestruct(m_array, m_size, newArray);
 		m_array = newArray;
 		m_capacity = newCapacity;
 	}
@@ -64,7 +65,7 @@ public:
 		T* array = reinterpret_cast<T*>(buffer);
 		for (int i = 0; i < m_size; i++)
 		{
-			new(array + i) (*(other.m_array + i));
+			new(array + i) T(*(other.m_array + i));
 		}
 		m_array = array;
 	}

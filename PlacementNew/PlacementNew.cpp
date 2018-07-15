@@ -37,7 +37,8 @@ std::string CDebugString::count{ "Obj0" };
 
 int main()
 {
-	CArray<CDebugString> array(1);
+	CArray<CDebugString> array(3);
+	auto copy(array);
 	array.Expand(1);
     return 0;
 }
