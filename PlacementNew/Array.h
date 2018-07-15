@@ -17,7 +17,7 @@ class CArray
 		T* newArray = reinterpret_cast<T*>(newBuffer);
 		for (int i = 0; i < m_size; i++)
 		{
-			new(newArray + i) (*(m_array + i)); // copy over
+			new(newArray + i) T{ (*(m_array + i)) }; // copy over
 		}
 
 		for (int i = 0; i < m_size; i++)
@@ -26,7 +26,7 @@ class CArray
 		}
 		char* oldBuffer = reinterpret_cast<char*>(m_array);
 		delete[] oldBuffer;
-		m_array = newBuffer;
+		m_array = newArray;
 		m_capacity = newCapacity;
 	}
 
@@ -52,6 +52,8 @@ public:
 			new(array + i) T{};
 		}
 		m_array = array;
+		m_size = n;
+		m_capacity = n;
 	}
 
 	CArray(const CArray& other)
