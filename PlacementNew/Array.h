@@ -6,6 +6,19 @@ class CArray
 	int m_size{};
 	int m_capacity{};
 	
+	void CopyOverAndDestructDescending(T* oldArray, int oldSize, T* newArray)
+	{
+		/*
+		old: A A A _ _ _
+		new: _ A A A _ _
+		*/
+		for (int i = oldSize - 1; i >=0 ; --i)
+		{
+			new(newArray + i) T{ (*(oldArray + i)) };
+			(oldArray + i)->~T();
+		}
+	}
+
 	void CopyOverAndDestruct(T* oldArray, int oldSize, T* newArray)
 	{
 		for (int i = 0; i < oldSize; ++i)
@@ -13,8 +26,7 @@ class CArray
 			new(newArray + i) T{ (*(oldArray + i)) };
 			(oldArray + i)->~T();
 		}
-		char* oldBuffer = reinterpret_cast<char*>(oldArray);
-		delete[] oldBuffer;
+		
 	}
 
 	void ChangeCapacity(int newCapacity)
@@ -27,8 +39,23 @@ class CArray
 		char* newBuffer = new char[sizeof(T)*newCapacity];
 		T* newArray = reinterpret_cast<T*>(newBuffer);
 		CopyOverAndDestruct(m_array, m_size, newArray);
+		
+		char* oldBuffer = reinterpret_cast<char*>(m_array);
+		delete[] oldBuffer;
+		
 		m_array = newArray;
 		m_capacity = newCapacity;
+	}
+
+	void EnsureExtraCapacity()
+	{
+		if (m_size < m_capacity)
+		{
+			return;
+		}
+
+		int newCapacity = m_capacity * 2;
+		ChangeCapacity(newCapacity);
 	}
 
 public:
@@ -39,13 +66,6 @@ public:
 
 	CArray(int n)
 	{
-		/*
-		the idea here is to create an array of n default Ts
-		if we do it iteratively, for every iteration, a new call will be made
-		instead what we do is that we allocate memory first and then "place"
-		the constructed object in that place
-		*/
-
 		char* buffer = new char[sizeof(T)*n];
 		T* array = reinterpret_cast<T*>(buffer);
 		for (int i = 0; i < n; i++)
@@ -69,7 +89,20 @@ public:
 		}
 		m_array = array;
 	}
+	void AddBack(const T& element)
+	{
+		EnsureExtraCapacity();
+		new (m_array + m_size) T{ element };
+		m_size++;
+	}
 
+	void AddFront(const T& element)
+	{
+		EnsureExtraCapacity();
+		CopyOverAndDestructDescending(m_array, m_size, (m_array + 1));
+		new (m_array) T{ element };
+		m_size++;
+	}
 	void Shrink(int shrinkBy)
 	{
 		if (m_capacity - shrinkBy < m_size)

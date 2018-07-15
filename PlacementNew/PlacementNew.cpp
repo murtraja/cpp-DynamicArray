@@ -33,13 +33,13 @@ public:
 	}
 
 };
-std::string CDebugString::count{ "Obj0" };
+std::string CDebugString::count{ "Obj1" };
 
 int main()
 {
 	CArray<CDebugString> array(3);
-	auto copy(array);
-	array.Expand(1);
+	CDebugString s4;
+	array.AddFront(s4);
     return 0;
 }
 
