@@ -102,7 +102,7 @@ public:
 	void Insert(int index, const T& element)
 	{
 		EnsureExtraCapacity();
-		CopyOverAndDestructDescending(m_array+index, m_size - index, (m_array + index + 1);
+		CopyOverAndDestructDescending(m_array+index, m_size - index, (m_array + index + 1));
 		new(m_array + index) T{ element };
 		m_size++;
 	}

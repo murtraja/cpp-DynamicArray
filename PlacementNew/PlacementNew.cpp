@@ -40,6 +40,8 @@ int main()
 	CArray<CDebugString> array(3);
 	CDebugString s4;
 	array.AddFront(s4);
+	CDebugString s5;
+	array.Insert(2, s5);
     return 0;
 }
 
