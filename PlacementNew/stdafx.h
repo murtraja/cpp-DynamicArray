@@ -13,4 +13,7 @@
 #include <iostream>
 #include <cctype>
 #include <string>
+#include <functional>
+#include <cctype>
 // TODO: reference additional headers your program requires here
+

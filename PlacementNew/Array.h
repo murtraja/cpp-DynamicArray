@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+
 template<typename T>
 class CArray
 {
@@ -34,6 +36,7 @@ class CArray
 		if (newCapacity < m_size)
 		{
 			std::cout << "Can't change the capacity to " << newCapacity << ", since it is less than size " << m_size << ".\n";
+			return;
 		}
 
 		char* newBuffer = new char[sizeof(T)*newCapacity];
@@ -55,6 +58,10 @@ class CArray
 		}
 
 		int newCapacity = m_capacity * 2;
+		if (newCapacity == 0)
+		{
+			newCapacity = 1;
+		}
 		ChangeCapacity(newCapacity);
 	}
 
@@ -91,7 +98,7 @@ public:
 	}
 	void AddBack(const T& element)
 	{
-		Insert(m_size - 1, element);
+		Insert(m_size, element);
 	}
 
 	void AddFront(const T& element)
@@ -101,11 +108,29 @@ public:
 
 	void Insert(int index, const T& element)
 	{
+		if (index <0 && index > m_size)
+		{
+			std::cout << "Invalid index: " << index << ".\n";
+			return;
+		}
 		EnsureExtraCapacity();
 		CopyOverAndDestructDescending(m_array+index, m_size - index, (m_array + index + 1));
 		new(m_array + index) T{ element };
 		m_size++;
 	}
+
+	int Find(const T& element) const
+	{
+		for (int i = 0; i < m_size; ++i)
+		{
+			if (element == *(m_array + i))
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	void Shrink(int shrinkBy)
 	{
 		if (m_capacity - shrinkBy < m_size)
@@ -158,5 +183,14 @@ public:
 		return m_capacity;
 	}
 
-
+	void PrintAll(std::function<void(const T&)>& printer)
+	{
+		for (int i = 0; i < m_size; i++)
+		{
+			std::cout << i << ". ";
+			printer(*(m_array + i));
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+	}
 };
