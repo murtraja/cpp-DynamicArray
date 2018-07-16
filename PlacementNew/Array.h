@@ -131,6 +131,23 @@ public:
 		return -1;
 	}
 
+	void Remove(const T& element)
+	{
+		int index = Find(element);
+		if (index == -1)
+		{
+			std::cout << "Can't find the element to be removed.\n";
+			return;
+		}
+
+		/*
+		old: A A F B C
+		new: A A B C
+		*/
+		CopyOverAndDestruct(m_array + index + 1, m_size - index - 1, m_array + index);
+		m_size--;
+	}
+
 	void Shrink(int shrinkBy)
 	{
 		if (m_capacity - shrinkBy < m_size)

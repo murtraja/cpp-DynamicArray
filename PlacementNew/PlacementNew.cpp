@@ -87,6 +87,9 @@ void Test2()
 	int foundIndex = array.Find(_s1);
 	MASSERT(foundIndex == 0, "Find returned an invalid index.");
 
+	array.Remove(s1);
+	array.Remove(s1);
+
 	array.PrintAll(CDebugString::GetPrinter());
 }
 
