@@ -91,16 +91,19 @@ public:
 	}
 	void AddBack(const T& element)
 	{
-		EnsureExtraCapacity();
-		new (m_array + m_size) T{ element };
-		m_size++;
+		Insert(m_size - 1, element);
 	}
 
 	void AddFront(const T& element)
 	{
+		Insert(0, element);
+	}
+
+	void Insert(int index, const T& element)
+	{
 		EnsureExtraCapacity();
-		CopyOverAndDestructDescending(m_array, m_size, (m_array + 1));
-		new (m_array) T{ element };
+		CopyOverAndDestructDescending(m_array+index, m_size - index, (m_array + index + 1);
+		new(m_array + index) T{ element };
 		m_size++;
 	}
 	void Shrink(int shrinkBy)
